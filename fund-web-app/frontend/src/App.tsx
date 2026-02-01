@@ -12,6 +12,9 @@ interface FundData {
   amount: number;
 }
 
+// 获取 API 基础路径，优先使用环境变量，本地开发默认使用 8000 端口
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 const App: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [data, setData] = useState<FundData[]>([]);
@@ -37,7 +40,7 @@ const App: React.FC = () => {
     if (currentData.length === 0) return;
     setLoading(true);
     try {
-      const res = await axios.post('http://172.20.10.5:8000/api/refresh', currentData);
+      const res = await axios.post(`${API_BASE}/api/refresh`, currentData);
       setData(res.data.data);
     } catch (err) {
       toast.error('刷新实时数据失败');
@@ -50,7 +53,7 @@ const App: React.FC = () => {
     if (!inputText.trim()) return;
     setLoading(true);
     try {
-      const res = await axios.post('http://172.20.10.5:8000/api/resolve', { text: inputText });
+      const res = await axios.post(`${API_BASE}/api/resolve`, { text: inputText });
       const newFunds = res.data.data;
       if (newFunds.length > 0) {
         // 合并新旧持仓，如果代码相同则更新
